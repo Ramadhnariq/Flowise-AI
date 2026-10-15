@@ -1,241 +1,122 @@
-<!-- markdownlint-disable MD030 -->
+# Flowise AI — RAG Chatbot
 
-<p align="center">
-<img src="https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_white.svg#gh-light-mode-only">
-<img src="https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_dark.svg#gh-dark-mode-only">
-</p>
+A Retrieval-Augmented Generation (RAG) chatbot project built with **Flowise**, Docker, Redis, and Qdrant. This project explores how large language models can retrieve relevant information from a knowledge base and use it to generate contextual responses.
 
-<div align="center">
+## Overview
 
-[![Release Notes](https://img.shields.io/github/release/FlowiseAI/Flowise)](https://github.com/FlowiseAI/Flowise/releases)
-[![Discord](https://img.shields.io/discord/1087698854775881778?label=Discord&logo=discord)](https://discord.gg/jbaHfsRVBW)
-[![Twitter Follow](https://img.shields.io/twitter/follow/FlowiseAI?style=social)](https://twitter.com/FlowiseAI)
-[![GitHub star chart](https://img.shields.io/github/stars/FlowiseAI/Flowise?style=social)](https://star-history.com/#FlowiseAI/Flowise)
-[![GitHub fork](https://img.shields.io/github/forks/FlowiseAI/Flowise?style=social)](https://github.com/FlowiseAI/Flowise/fork)
+This project extends a Flowise deployment with additional services to support conversational AI workflows, vector search, and persistent data storage.
 
-English | [繁體中文](./i18n/README-TW.md) | [简体中文](./i18n/README-ZH.md) | [日本語](./i18n/README-JA.md) | [한국어](./i18n/README-KR.md)
+The system is designed to experiment with different LLM providers and connect AI workflows with external APIs.
 
-</div>
+## Features
 
-<h3>Build AI Agents, Visually</h3>
-<a href="https://github.com/FlowiseAI/Flowise">
-<img width="100%" src="https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_agentflow.gif?raw=true"></a>
+- **RAG pipeline** — retrieve relevant context from a knowledge base before generating responses.
+- **Visual AI workflows** — build and manage chatbot pipelines using Flowise.
+- **Vector search** — use Qdrant to store and retrieve vector embeddings.
+- **Conversational memory** — integrate Redis into the chatbot infrastructure.
+- **Multiple LLM options** — experiment with supported models and providers, depending on the configured workflow.
+- **API integration** — explore connections between AI workflows and external APIs using Postman for testing.
 
-## 📚 Table of Contents
+## Tech Stack
 
--   [⚡ Quick Start](#-quick-start)
--   [🐳 Docker](#-docker)
--   [👨‍💻 Developers](#-developers)
--   [🌱 Env Variables](#-env-variables)
--   [📖 Documentation](#-documentation)
--   [🌐 Self Host](#-self-host)
--   [☁️ Flowise Cloud](#️-flowise-cloud)
--   [🙋 Support](#-support)
--   [🙌 Contributing](#-contributing)
--   [📄 License](#-license)
+| Technology | Purpose |
+|---|---|
+| Flowise | Visual builder for LLM and RAG workflows |
+| Docker Compose | Run and manage project services |
+| Redis | Memory and supporting data services |
+| Qdrant | Vector database for semantic retrieval |
+| LLM providers | Generate responses based on the configured workflow |
+| Embeddings | Convert text into vectors for retrieval |
+| Postman | Test and inspect API requests |
 
-## ⚡Quick Start
+## Architecture
 
-Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
+```text
+User Question
+     |
+     v
+Flowise Chatflow
+     |
+     v
+Embedding & Retrieval
+     |
+     v
+Qdrant Vector Database
+     |
+     v
+Relevant Context + User Question
+     |
+     v
+Configured Language Model
+     |
+     v
+Generated Response
+     |
+     v
+User
+```
 
-1. Install Flowise
-    ```bash
-    npm install -g flowise
-    ```
-2. Start Flowise
+Redis supports the configured memory or supporting services. The exact memory flow depends on how Redis is connected within the Flowise workflow.
 
-    ```bash
-    npx flowise start
-    ```
+## Getting Started
 
-3. Open [http://localhost:3000](http://localhost:3000)
+### Prerequisites
 
-## 🐳 Docker
+- Docker Desktop
+- Git
+- Configured LLM provider and credentials, if required by your workflow
 
-### Docker Compose
+### Run with Docker Compose
 
-1. Clone the Flowise project
-2. Go to `docker` folder at the root of the project
-3. Copy `.env.example` file, paste it into the same location, and rename to `.env` file
-4. `docker compose up -d`
-5. Open [http://localhost:3000](http://localhost:3000)
-6. You can bring the containers down by `docker compose stop`
+1. Clone this repository.
 
-### Docker Image
+   ```bash
+   git clone https://github.com/Ramadhnariq/Flowise-AI.git
+   cd Flowise-AI
+   ```
 
-1. Build the image locally:
+2. Open the Docker configuration directory.
 
-    ```bash
-    docker build --no-cache -t flowise .
-    ```
+   ```bash
+   cd docker
+   ```
 
-2. Run image:
+3. Copy `.env.example` to `.env`, if the example file is available.
 
-    ```bash
-    docker run -d --name flowise -p 3000:3000 flowise
-    ```
+4. Configure the required environment variables.
 
-3. Stop image:
+5. Start the services.
 
-    ```bash
-    docker stop flowise
-    ```
+   ```bash
+   docker compose up -d
+   ```
 
-## 👨‍💻 Developers
+6. Open the Flowise interface using the port configured in your environment.
 
-Flowise has 3 different modules in a single mono repository.
+### Stop the services
 
--   `server`: Node backend to serve API logics
--   `ui`: React frontend
--   `components`: Third-party nodes integrations
--   `api-documentation`: Auto-generated swagger-ui API docs from express
+```bash
+docker compose down
+```
 
-### Prerequisite
+## Configuration
 
--   Install [PNPM](https://pnpm.io/installation)
-    ```bash
-    npm i -g pnpm
-    ```
+Before running the project, configure the required settings for:
 
-### Setup
+- Flowise server
+- LLM provider and API credentials
+- Embedding model
+- Qdrant connection and collection
+- Redis connection and memory configuration
+- External API integrations
 
-1.  Clone the repository:
+Never commit `.env` files, API keys, passwords, or other credentials to the repository.
 
-    ```bash
-    git clone https://github.com/FlowiseAI/Flowise.git
-    ```
+## Project Status
 
-2.  Go into repository folder:
+This project is under development. Features and configuration details may change as the RAG workflow and integrations are refined.
 
-    ```bash
-    cd Flowise
-    ```
+## Acknowledgements
 
-3.  Install all dependencies of all modules:
+This project builds on [Flowise](https://github.com/FlowiseAI/Flowise). Refer to the upstream project and its license for the original source code and licensing terms.
 
-    ```bash
-    pnpm install
-    ```
-
-4.  Build all the code:
-
-    ```bash
-    pnpm build
-    ```
-
-    <details>
-    <summary>Exit code 134 (JavaScript heap out of memory)</summary>  
-    If you get this error when running the above `build` script, try increasing the Node.js heap size and run the script again:
-
-    ```bash
-    # macOS / Linux / Git Bash
-    export NODE_OPTIONS="--max-old-space-size=4096"
-
-    # Windows PowerShell
-    $env:NODE_OPTIONS="--max-old-space-size=4096"
-
-    # Windows CMD
-    set NODE_OPTIONS=--max-old-space-size=4096
-    ```
-
-    Then run:
-
-    ```bash
-    pnpm build
-    ```
-
-    </details>
-
-5.  Start the app:
-
-    ```bash
-    pnpm start
-    ```
-
-    You can now access the app on [http://localhost:3000](http://localhost:3000)
-
-6.  For development build:
-
-    -   Create `.env` file and specify the `VITE_PORT` (refer to `.env.example`) in `packages/ui`
-    -   Create `.env` file and specify the `PORT` (refer to `.env.example`) in `packages/server`
-    -   Run:
-
-        ```bash
-        pnpm dev
-        ```
-
-    Any code changes will reload the app automatically on [http://localhost:8080](http://localhost:8080)
-
-## 🌱 Env Variables
-
-Flowise supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://github.com/FlowiseAI/Flowise/blob/main/CONTRIBUTING.md#-env-variables)
-
-## 📖 Documentation
-
-You can view the Flowise Docs [here](https://docs.flowiseai.com/)
-
-## 🌐 Self Host
-
-Deploy Flowise self-hosted in your existing infrastructure, we support various [deployments](https://docs.flowiseai.com/configuration/deployment)
-
--   [AWS](https://docs.flowiseai.com/configuration/deployment/aws)
--   [Azure](https://docs.flowiseai.com/configuration/deployment/azure)
--   [Digital Ocean](https://docs.flowiseai.com/configuration/deployment/digital-ocean)
--   [GCP](https://docs.flowiseai.com/configuration/deployment/gcp)
--   [Alibaba Cloud](https://computenest.console.aliyun.com/service/instance/create/default?type=user&ServiceName=Flowise社区版)
--   <details>
-      <summary>Others</summary>
-
-    -   [Railway](https://docs.flowiseai.com/configuration/deployment/railway)
-
-        [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/pn4G8S?referralCode=WVNPD9)
-        
-    -   [Northflank](https://northflank.com/stacks/deploy-flowiseai)
-
-        [![Deploy to Northflank](https://assets.northflank.com/deploy_to_northflank_smm_36700fb050.svg)](https://northflank.com/stacks/deploy-flowiseai)
-
-    -   [Render](https://docs.flowiseai.com/configuration/deployment/render)
-
-        [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://docs.flowiseai.com/configuration/deployment/render)
-
-    -   [HuggingFace Spaces](https://docs.flowiseai.com/deployment/hugging-face)
-
-        <a href="https://huggingface.co/spaces/FlowiseAI/Flowise"><img src="https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg" alt="HuggingFace Spaces"></a>
-
-    -   [Elestio](https://elest.io/open-source/flowiseai)
-
-        [![Deploy on Elestio](https://elest.io/images/logos/deploy-to-elestio-btn.png)](https://elest.io/open-source/flowiseai)
-
-    -   [Sealos](https://template.sealos.io/deploy?templateName=flowise)
-
-        [![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://template.sealos.io/deploy?templateName=flowise)
-
-    -   [RepoCloud](https://repocloud.io/details/?app_id=29)
-
-        [![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploy.png)](https://repocloud.io/details/?app_id=29)
-
-      </details>
-
-## ☁️ Flowise Cloud
-
-Get Started with [Flowise Cloud](https://flowiseai.com/).
-
-## 🙋 Support
-
-Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/FlowiseAI/Flowise/discussions).
-
-## 🙌 Contributing
-
-Thanks go to these awesome contributors
-
-<a href="https://github.com/FlowiseAI/Flowise/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=FlowiseAI/Flowise" />
-</a><br><br>
-
-See [Contributing Guide](CONTRIBUTING.md). Reach out to us at [Discord](https://discord.gg/jbaHfsRVBW) if you have any questions or issues.
-
-[![Star History Chart](https://api.star-history.com/svg?repos=FlowiseAI/Flowise&type=Timeline)](https://star-history.com/#FlowiseAI/Flowise&Date)
-
-## 📄 License
-
-Source code in this repository is made available under the [Apache License Version 2.0](LICENSE.md).
